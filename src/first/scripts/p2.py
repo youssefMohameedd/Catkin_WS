@@ -1,58 +1,43 @@
 #!/usr/bin/env python3
-import sys
-import rospy 
-
-from std_msgs.msg import *
-from first.msg import Months
-from first.srv import *
 
 
+import rospy
+from std_msgs.msg import String
+from first.srv import Birthday
+from first.msg import CakeAction, CakeGoal
+import actionlib
 
-##def send_age(my_age):
-##rospy.init_node('Month_Client', anonymous=True)
- ## rospy.wait_for_service('Month')
- ## Month = rospy.ServiceProxy('Month', Month) # I cannot understand this line
-  ##my_response = Month(my_age)
- ## print("Requesting %s"%(my_age))  ##comment when it works
-  
+Number_Of_Cakes = 3
+Age = 30
 
- ## return my_response.Message 
-#
+class SubscriberClient:
+    def _init_(self):
+        self.sub = rospy.Subscriber('month', String, self.callback)
+        self.client = actionlib.SimpleActionClient('bake_cake', CakeAction)
+        self.client.wait_for_server()
 
+    def callback(self, data):
+        rospy.loginfo("It is {}".format(data.data))
+        if "12" in data.data:
+            rospy.wait_for_service('birthday')
+            try:
+                birthday = rospy.ServiceProxy('birthday', Birthday)
+                response = birthday(Age)
+                rospy.loginfo(response.message)
+                goal = CakeGoal()
+                goal.num_cakes = Number_Of_Cakes   ##specify number of cakes
+                self.client.send_goal(goal, feedback_cb=self.feedback_callback)
+                self.client.wait_for_result()
+                result = self.client.get_result()
+                rospy.loginfo(result.message)
+            except rospy.ServiceException as e:
+                print("Service call failed: %s"%e)
 
+    def feedback_callback(self, feedback):
+        rospy.loginfo("Cakes Baked cake_baked: {}".format(feedback.cake_baked))
 
-class Listener:
-    def __init__(self):
-        self.counter = 0
-        rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("chatter", Months, self.callback)
-
-    def callback(self, Resala):
-        print("It is " , Resala.name , Resala.number) 
-        terminator = Resala.number
-        self.counter += 1
-        
-        if self.counter >= 10:
-            rospy.signal_shutdown('Executed callback 10 times')
-
-    def listen(self):
-        try:
-            rospy.spin()
-        except rospy.ROSInterruptException:
-            pass
-
-
-    
-if __name__ == '__main__': 
-   
-
-    age = 25
-    listener = Listener()
-    listener.listen()
-    #send_age(age)
-    
-    rospy.wait_for_service('Month')
-    Month = rospy.ServiceProxy('Month', Month) # I cannot understand this line
-    my_response = Month(age)
-    print("Requesting %s"%(age))  ##comment when it works
-##    print("%s"%(send_age(age)))
+if  __name__  ==  '__main__':
+    rospy.init_node('subscriber_client_node')
+    sc = SubscriberClient()
+    sc._init_()
+    rospy.spin()
