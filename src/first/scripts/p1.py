@@ -4,21 +4,24 @@ import rospy
 from std_msgs.msg import *
 from first.msg import Months
 
-import actionlib
+
 from first.srv import Month , MonthResponse
+import actionlib
 
 
 
 
-def handle_Age(req):
 
-  print("hi")
+def handle_Age(My_Data):
+
+  return MonthResponse("Happy ", My_Data.Age , "th Birthday!!")
 
 
-def add_two_ints_server():
-  rospy.init_node('Lab_server')
+
+def Month_server():
+
+  print("Server is working hard")
   s = rospy.Service('Month', Month, handle_Age)
-  ##print("Ready to add two ints.")
   rospy.spin()
 
 
@@ -50,5 +53,6 @@ if __name__ ==  '__main__':
 
     try:
           talker()
+          Month_server()
     except rospy.ROSInterruptException:
            pass
