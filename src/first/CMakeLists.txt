@@ -52,6 +52,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
    FILES
    Months.msg
+
 #   Message2.msg
 )
 
@@ -59,7 +60,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_service_files(
  FILES
  AddTwoInts.srv
- Month.srv
+ Birthday.srv
 )
 
 
@@ -67,6 +68,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_action_files(
     FILES
     Counter.action
+    Cake.action
 #   Action2.action
 )
   
