@@ -29,7 +29,7 @@ class PublisherServer:
         self.aserver.set_succeeded(result)
 
     def start(self):
-        while not rospy.is_shutdown():
+        while not rospy.is_shutdown() and self.month_num <= 12:
             self.pub.publish("Month {}".format(self.month_num))
             self.month_num += 1
             self.rate.sleep()

@@ -6,12 +6,14 @@ from std_msgs.msg import String
 from first.srv import Birthday
 from first.msg import CakeAction, CakeGoal
 import actionlib
+import sys
 
 Number_Of_Cakes = 3
 Age = 30
 
 class SubscriberClient:
-    def _init_(self):
+    def _init_(self, age):
+        self.age = age
         self.sub = rospy.Subscriber('month', String, self.callback)
         self.client = actionlib.SimpleActionClient('bake_cake', CakeAction)
         self.client.wait_for_server()
@@ -22,10 +24,10 @@ class SubscriberClient:
             rospy.wait_for_service('birthday')
             try:
                 birthday = rospy.ServiceProxy('birthday', Birthday)
-                response = birthday(Age)
+                response = birthday(self.age)
                 rospy.loginfo(response.message)
                 goal = CakeGoal()
-                goal.num_cakes = Number_Of_Cakes   ##specify number of cakes
+                goal.num_cakes = Number_Of_Cakes
                 self.client.send_goal(goal, feedback_cb=self.feedback_callback)
                 self.client.wait_for_result()
                 result = self.client.get_result()
@@ -38,6 +40,7 @@ class SubscriberClient:
 
 if  __name__  ==  '__main__':
     rospy.init_node('subscriber_client_node')
+    age = int(sys.argv[1]) if len(sys.argv) > 1 else 25
     sc = SubscriberClient()
-    sc._init_()
+    sc._init_(age)
     rospy.spin()
