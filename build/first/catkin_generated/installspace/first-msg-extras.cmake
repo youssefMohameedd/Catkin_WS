@@ -1,0 +1,2 @@
+set(first_MESSAGE_FILES "msg/Months.msg;msg/CounterAction.msg;msg/CounterActionGoal.msg;msg/CounterActionResult.msg;msg/CounterActionFeedback.msg;msg/CounterGoal.msg;msg/CounterResult.msg;msg/CounterFeedback.msg;msg/CakeAction.msg;msg/CakeActionGoal.msg;msg/CakeActionResult.msg;msg/CakeActionFeedback.msg;msg/CakeGoal.msg;msg/CakeResult.msg;msg/CakeFeedback.msg")
+set(first_SERVICE_FILES "srv/AddTwoInts.srv;srv/Birthday.srv")
